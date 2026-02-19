@@ -7,11 +7,11 @@ It provides a direct wrapper for WinAPI functions with safe resource management 
 - **Error Handling**: Detailed translation of Windows System Errors into Lua strings.
 - **Static Linking**: Built with -static-libgcc -static-libstdc++, no extra runtime dependencies required.
 ## Installation
-1. Download the [latest release][binary-lua54] and unzip.
-2. Place folder lua-win-pipe-v_2_0-lua54-win64 containing files init.lua and lua_win_pipe_v2.dll to your project directory (or other place within your package.path).
+1. Download the [latest release][binary] and unzip.
+2. Place folder lua_win_pipe_v_2_1_lua54_win64 and lua_win_pipe_v_2_1_lua54_win64.lua to your project directory (or other place within your package.path).
 3. Require the module:
 ```lua
-local lwp = require("lua-win-pipe-v_2_0-lua54-win64.init")
+local lwp = require("lua_win_pipe_v_2_1_lua54_win64")
 ```
 ## API Reference
 ### `lwp.server_pipe(name, opts)`
@@ -41,14 +41,13 @@ Complete usage scenarios are available in:
 - [sample-client.lua][sample-client]
 ## Downloads
 Pre-built binaries for Windows x64 (Lua 5.4):
-[Download v.2.0 Release][binary-lua54]
+[Download v.2.1 Release][binary]
 
 [sample-client]: sample-client.lua
 [sample-server]: sample-server.lua
-[binary-lua54]:https://github.com/dsabdrashitov/lua-win-pipe-v2/releases/download/v.2.0/lua-win-pipe-v_2_0-lua54-win64.zip
+[binary]:https://github.com/dsabdrashitov/lua-win-pipe-v2/releases/download/v.2.1/lib.zip
 
 ---
 <!-- ai-assisted: true -->
-<!-- ai-usage: cpp, lua, makefile -->
 > [!NOTE]
-> This repository is tagged as **AI-assisted**. The project was developed with the technical support of the **Gemini 3 Flash Preview**.
+> This project is **AI-assisted**. The architecture and implementation were developed through a collaborative process between a human engineer and Artificial Intelligence to ensure high code quality and efficiency.
