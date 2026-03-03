@@ -1,7 +1,15 @@
 local lwp = {}
-local module_path = (...):match("(.-)[^%.]+$")
 
-local dll_loader, err = package.loadlib(module_path:gsub("%.", "\\") .. "lua_win_pipe_v2.dll", "luaopen_lua_win_pipe_v2")
+local function get_script_dir()
+    local script_path = debug.getinfo(1, "S").source
+    -- Убираем '@' в начале (Lua добавляет его для файлов)
+    script_path = script_path:gsub("^@", "")
+    -- Возвращаем директорию
+    return script_path:match("(.*[/\\])")
+end
+
+local dll_path = get_script_dir() .. "lua_win_pipe_v2.dll"
+local dll_loader, err = package.loadlib(dll_path, "luaopen_lua_win_pipe_v2")
 if not dll_loader then
     error("Failed to load lua_win_pipe_v2.dll: " .. tostring(err))
 end
