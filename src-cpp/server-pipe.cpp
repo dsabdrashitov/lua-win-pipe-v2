@@ -16,7 +16,7 @@ namespace lwp::server_pipe {
         DWORD in_buf_size       = (DWORD)luaL_checkinteger(L, 7);
 
         DWORD dwOpenMode = 0;
-        DWORD dwPipeMode = PIPE_WAIT; // Всегда блокирующий
+        DWORD dwPipeMode = PIPE_WAIT; // Always blocking
 
         if (strcmp(mode, "r") == 0) {
             dwOpenMode |= PIPE_ACCESS_INBOUND;
@@ -36,7 +36,7 @@ namespace lwp::server_pipe {
 
         if (first_instance) dwOpenMode |= FILE_FLAG_FIRST_PIPE_INSTANCE;
 
-        // --- Создание объекта ---
+        // --- Create object ---
         lwp::pipe::PipeWrapper *pw = (lwp::pipe::PipeWrapper *)lua_newuserdata(L, sizeof(lwp::pipe::PipeWrapper));
         pw->hPipe = INVALID_HANDLE_VALUE;
         luaL_getmetatable(L, METATABLE_NAME);
@@ -58,7 +58,7 @@ namespace lwp::server_pipe {
     int pipe_connect(lua_State *L) {
         lwp::pipe::PipeWrapper *pw = lwp::pipe::check_pipe(L, 1);
         
-        // ConnectNamedPipe возвращает FALSE, если клиент уже подключился между вызовами
+        // ConnectNamedPipe returns FALSE if a client connected between calls
         BOOL success = ConnectNamedPipe(pw->hPipe, NULL);
         if (!success) {
             DWORD last_error = GetLastError();

@@ -29,7 +29,6 @@ namespace lwp::pipe {
             return luaL_argerror(L, 2, "count must be non-negative");
         }
 
-        // Временный буфер (vector безопасен и удобен)
         std::vector<char> buffer((size_t)count);
         DWORD bytesRead = 0;
 
@@ -45,18 +44,12 @@ namespace lwp::pipe {
             DWORD err = GetLastError();
             if (err == ERROR_MORE_DATA) {
                 lua_pushlstring(L, buffer.data(), bytesRead);
-                lua_pushboolean(L, TRUE); // Индикатор: сообщение прочитано не полностью
+                lua_pushboolean(L, TRUE); // incomplete message
                 return 2;
             }
-            if (err == ERROR_BROKEN_PIPE) {
-                // Принудительно закрываем дескриптор, так как он больше не валиден
-                close_handle(pw); 
-            }
-            // Возвращаем nil, "сообщение", код
             return lwp::errors::push_windows_error(L, err);
         }
 
-        // Возвращаем прочитанные данные как строку
         lua_pushlstring(L, buffer.data(), bytesRead);
         return 1;
     }
@@ -76,10 +69,9 @@ namespace lwp::pipe {
         if (count == 0) {
             if (!ReadFile(pw->hPipe, NULL, 0, NULL, NULL)) {
                 DWORD err = GetLastError();
-                if (err == ERROR_BROKEN_PIPE) close_handle(pw);
                 return lwp::errors::push_windows_error(L, err);
             }
-            lua_pushstring(L, ""); // Возвращаем пустую строку, как в стандартном io.read(0)
+            lua_pushstring(L, "");
             return 1;
         }
 
@@ -91,17 +83,15 @@ namespace lwp::pipe {
             if (!ReadFile(pw->hPipe, buffer.data() + totalRead, (DWORD)(count - totalRead), &read, NULL)) {
                 DWORD err = GetLastError();
                 if (err == ERROR_MORE_DATA) {
-                    // Игнорируем: граница сообщения достигнута, но нам нужно больше байт.
-                    // Windows заполнила текущий кусок буфера, продолжаем цикл.
+                    totalRead += read;
+                    continue;
                 } else {
-                    if (err == ERROR_BROKEN_PIPE) close_handle(pw);
                     return lwp::errors::push_windows_error(L, err);
                 }
             }
             if (read == 0) break;
             totalRead += read;
         }
-        
 
         if (totalRead < (size_t)count) {
             lua_pushnil(L);
@@ -158,7 +148,7 @@ namespace lwp::pipe {
             return lwp::errors::push_windows_error(L, GetLastError());
         }
 
-        // Проверка на "нулевую" запись при ненулевых входных данных
+        // Check for zero-byte write when input length > 0
         if (len > 0 && bytesWritten == 0) {
             lua_pushnil(L);
             lua_pushfstring(L, "write failed (%d of %d bytes)", (int)bytesWritten, (int)len);

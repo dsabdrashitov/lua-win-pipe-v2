@@ -1,24 +1,47 @@
-local lwp = require("build.lua-win-pipe-v_2_0-lua54-win64.init")
+local lwp = require("build.lib.lua_win_pipe_v_2_2_lua54_win64")
 local PIPE_NAME = [[\\.\pipe\MyTestPipe]]
 
 print("[Client] Connecting to pipe...")
 local cli, err = lwp.client_pipe(PIPE_NAME, "rw")
-if not cli then error("Failed to connect: " .. tostring(err)) end
+if not cli then
+    error(string.format("[Client] Failed to connect: %s", err or "unknown error"))
+end
 print("[Client] Connected!")
 
--- 1. Тест Write (создаем сообщение)
+-- 1. Send a message to the server
 print("[Client] Writing message...")
-cli:write("This is a long message to test message mode")
+local bytes, err = cli:write("This is a long message to test message mode")
+if not bytes then
+    error(string.format("[Client] Write failed: %s", err))
+else
+    print("[Client] Wrote " .. bytes .. " bytes")
+end
 
--- 2. Тест Read
+-- 2. Read the server's response (blocking)
 print("[Client] Waiting for server response...")
-local resp = cli:read()
-print("[Client] Server said: " .. tostring(resp))
+local resp, incomplete = cli:read(1024)  -- read up to 1024 bytes
+if not resp then
+    error(string.format("[Client] Read failed: %s", err))
+else
+    print("[Client] Server said: " .. resp)
+    if incomplete then
+        print("[Client] Warning: message incomplete, more data available")
+    end
+end
 
--- 3. Тест Write All
+-- 3. Send an exact number of bytes using write_all
 print("[Client] Sending 10 bytes exactly...")
-cli:write_all("1234567890EXTRA") -- Пишем больше, сервер заберет только 10
+local ok, err = cli:write_all("1234567890EXTRA")  -- server will read only first 10
+if not ok then
+    error(string.format("[Client] Write_all failed: %s", err))
+else
+    print("[Client] Write_all succeeded")
+end
 
+-- 4. Close the connection
 print("[Client] Closing...")
-cli:close()
+local ok, err = cli:close()
+if not ok then
+    error(string.format("[Client] Close failed: %s", err))
+end
 print("[Client] Done.")

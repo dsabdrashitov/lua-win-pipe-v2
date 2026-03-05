@@ -32,10 +32,10 @@ namespace lwp::client_pipe {
         pw->hPipe = CreateFileA(
             name,
             dwDesiredAccess,
-            0,              // Shared mode: 0 для пайпов (монопольно)
-            NULL,           // Security
-            OPEN_EXISTING,  // Пайп уже должен быть создан сервером
-            0,              // Атрибуты
+            0,              // Shared mode: 0 for pipes (exclusive access)
+            NULL,           // Security attributes
+            OPEN_EXISTING,  // Pipe must already be created by the server
+            0,              // Flags and attributes
             NULL
         );
 
@@ -69,20 +69,20 @@ namespace lwp::client_pipe {
     void registerMeta(lua_State* L) {
         luaL_newmetatable(L, METATABLE_NAME); // [mt]
 
-        // Устанавливаем __gc напрямую в метатаблицу
+        // Set __gc directly in the metatable
         lua_pushcfunction(L, lwp::pipe::pipe_gc);
         lua_setfield(L, -2, "__gc");          // [mt]
 
-        // Создаем отдельную таблицу для пользовательских методов
+        // Create a separate table for user methods
         lua_newtable(L);                      // [mt, methods]
         luaL_setfuncs(L, client_pipe_methods, 0);
 
-        // Устанавливаем таблицу методов как __index для метатаблицы
-        // Теперь: mt.__index = methods
+        // Set methods table as __index for the metatable
+        // Now: mt.__index = methods
         lua_setfield(L, -2, "__index");       // [mt]
 
-        // Очищаем стек
+        // Clear the stack
         lua_pop(L, 1);
     }
-
+    
 }

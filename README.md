@@ -8,10 +8,10 @@ It provides a direct wrapper for WinAPI functions with safe resource management 
 - **Static Linking**: Built with -static-libgcc -static-libstdc++, no extra runtime dependencies required.
 ## Installation
 1. Download the [latest release][binary] and unzip.
-2. Place folder lua_win_pipe_v_2_1_lua54_win64 and lua_win_pipe_v_2_1_lua54_win64.lua to your project directory (or other place within your package.path).
+2. Place folder `lua_win_pipe_v_2_2_lua54_win64` and `lua_win_pipe_v_2_2_lua54_win64.lua` into your project directory (or any location within your `package.path`).
 3. Require the module:
 ```lua
-local lwp = require("lua_win_pipe_v_2_1_lua54_win64")
+local lwp = require("lua_win_pipe_v_2_2_lua54_win64")
 ```
 ## API Reference
 ### `lwp.server_pipe(name, opts)`
@@ -25,7 +25,7 @@ Creates a server pipe instance.
 ### `lwp.client_pipe(name, mode)`
 Connects to an existing named pipe.
 ### Common Methods
-- **read(n)**: Reads up to n bytes. In Message Mode, returns data, is_incomplete.
+- **read(n)**: Reads up to n bytes. In Message Mode, returns `data, is_incomplete`.
 - **read_exactly(n)**: Reads exactly n bytes, ignoring message boundaries.
 - **write(data)**: Performs a single write operation.
 - **write_all(data)**: Ensures the entire string is written (loops if necessary).
@@ -41,11 +41,11 @@ Complete usage scenarios are available in:
 - [sample-client.lua][sample-client]
 ## Downloads
 Pre-built binaries for Windows x64 (Lua 5.4):
-[Download v.2.1 Release][binary]
+[Download v.2.2 Release][binary]
 
 [sample-client]: sample-client.lua
 [sample-server]: sample-server.lua
-[binary]:https://github.com/dsabdrashitov/lua-win-pipe-v2/releases/download/v.2.1/lib.zip
+[binary]: https://github.com/dsabdrashitov/lua-win-pipe-v2/releases/download/v.2.2/lib.zip
 
 ---
 <!-- ai-assisted: true -->

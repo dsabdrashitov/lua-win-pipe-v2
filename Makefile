@@ -1,4 +1,4 @@
-PROJECT_NAME := lua_win_pipe_v_2_1_lua54_win64
+PROJECT_NAME := lua_win_pipe_v_2_2_lua54_win64
 DLL_NAME := lua_win_pipe_v2
 ZIP_NAME := lib.zip
 
